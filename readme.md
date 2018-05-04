@@ -1,12 +1,17 @@
 # Mantas Tamonis homework
 
 ## To run application
-To run already made JAR
 * Checkout project
-* Pre-build JAR is tamonis_homework.jar
-* Ensure that disc_config.properties is in same folder as JAR file
-* Preferable copy input.txt to the same dir where JAR resides
+* Building application requires maven instalation and JDK 1.8
+* Build project with maven (mvn package)
+* Copy produced JAR file, disc_config.properties and input.txt to the same folder
 * In terminal (assuming that input.txt is in the same dir):
 
-    java -jar tamonis_homework.jar input.txt
+    java -jar tamonis_homework-1.0.jar input.txt
+
+## To run test
+* mvn test
+* Code coverage report can be found in target\site\jacoco\index.html
+
+
 

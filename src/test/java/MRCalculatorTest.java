@@ -1,3 +1,5 @@
+package com.homework.calculators;
+
 import com.homework.TrxLine;
 import com.homework.calculators.MRCalculator;
 import com.homework.constants.Props;
@@ -11,46 +13,47 @@ import static org.junit.Assert.assertEquals;
 
 class MRCalculatorTest {
 
-    private MRCalculator mr_calc;
-    private Properties testProps;
+  private MRCalculator mr_calc;
+  private Properties testProps;
 
-    @BeforeEach
-    void initCalc(){
-        testProps = new Properties();
-        mr_calc = new MRCalculator(testProps);
-    }
+  @BeforeEach
+  void initCalc() {
 
-    @Test
-    void calcSPrice() {
+    testProps = new Properties();
+    mr_calc = new MRCalculator(testProps);
+  }
 
-        testProps.setProperty(Props.MR_S_PRICE, "2");
-        BigDecimal price = new BigDecimal(testProps.getProperty(Props.MR_S_PRICE));
+  @Test
+  void calcSPrice() {
 
-        TrxLine tl = new TrxLine("2018-04-29 S MR");
-        mr_calc.calcPrice(tl);
-        assertEquals("MR S price", price, tl.getFullPrice());
-    }
+    testProps.setProperty(Props.MR_S_PRICE, "2");
+    BigDecimal price = new BigDecimal(testProps.getProperty(Props.MR_S_PRICE));
 
-    @Test
-    void calcMPrice() {
+    TrxLine tl = new TrxLine("2018-04-29 S MR");
+    mr_calc.calcPrice(tl);
+    assertEquals("MR S price", price, tl.getEffectivePrice());
+  }
 
-        testProps.setProperty(Props.MR_M_PRICE, "3");
-        BigDecimal price = new BigDecimal(testProps.getProperty(Props.MR_M_PRICE));
+  @Test
+  void calcMPrice() {
 
-        TrxLine tl = new TrxLine("2018-04-29 M MR");
-        mr_calc.calcPrice(tl);
-        assertEquals("MR M price", price, tl.getFullPrice());
-    }
+    testProps.setProperty(Props.MR_M_PRICE, "3");
+    BigDecimal price = new BigDecimal(testProps.getProperty(Props.MR_M_PRICE));
 
-    @Test
-    void calcLPrice() {
+    TrxLine tl = new TrxLine("2018-04-29 M MR");
+    mr_calc.calcPrice(tl);
+    assertEquals("MR M price", price, tl.getEffectivePrice());
+  }
 
-        testProps.setProperty(Props.MR_L_PRICE, "4");
-        BigDecimal price = new BigDecimal(testProps.getProperty(Props.MR_L_PRICE));
+  @Test
+  void calcLPrice() {
 
-        TrxLine tl = new TrxLine("2018-04-29 L MR");
-        mr_calc.calcPrice(tl);
-        assertEquals("MR L price", price, tl.getFullPrice());
-    }
+    testProps.setProperty(Props.MR_L_PRICE, "4");
+    BigDecimal price = new BigDecimal(testProps.getProperty(Props.MR_L_PRICE));
+
+    TrxLine tl = new TrxLine("2018-04-29 L MR");
+    mr_calc.calcPrice(tl);
+    assertEquals("MR L price", price, tl.getEffectivePrice());
+  }
 
 }

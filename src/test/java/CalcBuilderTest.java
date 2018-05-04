@@ -1,3 +1,5 @@
+package com.homework.calculators;
+
 import com.homework.calculators.AbstractCalculator;
 import com.homework.calculators.CalcBuilder;
 import com.homework.calculators.LPCalculator;
@@ -9,13 +11,13 @@ import static junit.framework.TestCase.assertTrue;
 
 class CalcBuilderTest {
 
-    @Test
-    void getVendorSpecific() {
+  @Test
+  void getVendorSpecific() {
 
-        AbstractCalculator ac = CalcBuilder.getVendorSpecific(Vendors.MR, null);
-        assertTrue("MR calculator instance", (ac instanceof MRCalculator));
+    AbstractCalculator ac = CalcBuilder.getVendorSpecific(Vendors.MR, null);
+    assertTrue("MR calculator instance", (ac instanceof MRCalculator));
 
-        ac = CalcBuilder.getVendorSpecific(Vendors.LP, null);
-        assertTrue("LP calculator instance", (ac instanceof LPCalculator));
-    }
+    ac = CalcBuilder.getVendorSpecific(Vendors.LP, null);
+    assertTrue("LP calculator instance", (ac instanceof LPCalculator));
+  }
 }

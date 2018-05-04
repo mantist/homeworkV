@@ -1,4 +1,7 @@
+package com.homework;
+
 import com.homework.TrxLine;
+import com.homework.constants.Size;
 import com.homework.constants.Vendors;
 import org.junit.jupiter.api.Test;
 
@@ -9,81 +12,117 @@ import static org.junit.Assert.*;
 
 class TrxLineTest {
 
-    @Test
-    void parseValidTransactionLine() {
-        TrxLine testLine = new TrxLine("2015-02-01 S MR");
+  @Test
+  void parseValidTransactionLine() {
 
-        assertEquals("Valid line size", TrxLine.Size.S, testLine.getSize());
-        assertEquals("Valid line date", LocalDate.parse("2015-02-01"), testLine.getTrxDt());
-        assertEquals("Valid line vendor", Vendors.MR, testLine.getVendor());
-        assertTrue("Valid line status", testLine.isValid());
-    }
+    TrxLine tl = new TrxLine("2015-02-01 S MR");
 
-    @Test
-    void parseInvalidLine() {
-        TrxLine testLine = new TrxLine("2015-02-01SRM");
+    assertEquals("Valid line size", Size.S, tl.getSize());
+    assertEquals("Valid line date",
+                  LocalDate.parse("2015-02-01"),
+                  tl.getTrxDt());
+    assertEquals("Valid line vendor", Vendors.MR, tl.getVendor());
+    assertTrue("Valid line status", tl.isValid());
+  }
 
-        assertFalse("Invalid line (incorrect structure) status", testLine.isValid());
-    }
+  @Test
+  void parseInvalidLine() {
 
-    @Test
-    void parseInvalidProvider() {
-        TrxLine testLine = new TrxLine("2015-02-01 S RM");
+    TrxLine tl = new TrxLine("2015-02-01SRM");
 
-        assertFalse("Invalid line (unknown vendor) status", testLine.isValid());
-    }
+    assertFalse("Invalid line (incorrect structure) status",
+                tl.isValid());
+  }
 
-    @Test
-    void parseInvalidSize() {
-        TrxLine testLine = new TrxLine("2015-02-01 X MR");
+  @Test
+  void parseInvalidProvider() {
 
-        assertFalse("Invalid line (unknown size) status", testLine.isValid());
-    }
+    TrxLine tl = new TrxLine("2015-02-01 S RM");
 
-    @Test
-    void parseInvalidDate() {
-        TrxLine testLine = new TrxLine("9999-99-99 S MR");
+    assertFalse("Invalid line (unknown vendor) status",
+                tl.isValid());
+  }
 
-        assertFalse("Invalid line (wrong date) status", testLine.isValid());
-    }
+  @Test
+  void parseInvalidSize() {
 
-    @Test
-    void getPriceAndDiscount() {
-        TrxLine testLine = new TrxLine("2015-02-01 S MR");
+    TrxLine tl = new TrxLine("2015-02-01 X MR");
 
-        testLine.setPrice(new BigDecimal("1.97"));
-        testLine.setDiscount(new BigDecimal("0.08"));
-        assertEquals("Price before discount", new BigDecimal("1.97"), testLine.getPrice());
-        assertEquals("Price after discount", new BigDecimal("1.89"), testLine.getFullPrice());
-        assertEquals("Discount", new BigDecimal("0.08"), testLine.getDiscount());
-    }
+    assertFalse("Invalid line (unknown size) status", tl.isValid());
+  }
 
-    @Test
-    void toStringInvalidLine() {
-        String str = "2015-02-01SRM";
-        TrxLine testLine = new TrxLine(str);
+  @Test
+  void parseInvalidDate() {
 
-        assertEquals("Invalid line output", str.concat(" Ignored"), testLine.toString());
-    }
+    TrxLine tl = new TrxLine("9999-99-99 S MR");
 
-    @Test
-    void toStringNoDiscountLine() {
-        String str = "2015-02-01 S MR";
-        TrxLine testLine = new TrxLine(str);
+    assertFalse("Invalid line (wrong date) status", tl.isValid());
+  }
 
-        testLine.setPrice(new BigDecimal("1"));
+  @Test
+  void getPriceAndDiscount() {
 
-        assertEquals("No discount line output", str.concat(" 1.00 -"), testLine.toString());
-    }
+    TrxLine tl = new TrxLine("2015-02-01 S MR");
 
-    @Test
-    void toStringDiscountLine() {
-        String str = "2015-02-01 S MR";
-        TrxLine testLine = new TrxLine(str);
+    tl.setPrice(new BigDecimal("1.97"));
+    tl.setDiscount(new BigDecimal("0.08"));
+    assertEquals("Price before discount",
+                  new BigDecimal("1.97"),
+                  tl.getPrice());
+    assertEquals("Price after discount",
+                  new BigDecimal("1.89"),
+                  tl.getEffectivePrice());
+    assertEquals("Discount",
+                  new BigDecimal("0.08"),
+                  tl.getDiscount());
+    assertEquals("Effective discount bellow price",
+                  new BigDecimal("0.08"),
+                  tl.getEffectiveDiscount());
 
-        testLine.setPrice(new BigDecimal("2"));
-        testLine.setDiscount(new BigDecimal("2"));
+    tl.addDiscount(new BigDecimal("1.90"));
+    assertEquals("Discount after addition",
+                  new BigDecimal("1.98"),
+                  tl.getDiscount());
+    assertEquals("Effective discount equal to price",
+                  tl.getPrice(),
+                  tl.getEffectiveDiscount());
+  }
 
-        assertEquals("No discount line output", str.concat(" 0.00 2.00"), testLine.toString());
-    }
+  @Test
+  void toStringInvalidLine() {
+
+    String str = "2015-02-01SRM";
+    TrxLine tl = new TrxLine(str);
+
+    assertEquals("Invalid line output",
+                  str.concat(" Ignored"),
+                  tl.toString());
+  }
+
+  @Test
+  void toStringNoDiscountLine() {
+
+    String str = "2015-02-01 S MR";
+    TrxLine tl = new TrxLine(str);
+
+    tl.setPrice(new BigDecimal("1"));
+
+    assertEquals("No discount line output",
+                  str.concat(" 1.00 -"),
+                  tl.toString());
+  }
+
+  @Test
+  void toStringDiscountLine() {
+
+    String str = "2015-02-01 S MR";
+    TrxLine tl = new TrxLine(str);
+
+    tl.setPrice(new BigDecimal("2"));
+    tl.setDiscount(new BigDecimal("2"));
+
+    assertEquals("No discount line output",
+                  str.concat(" 0.00 2.00"),
+                  tl.toString());
+  }
 }

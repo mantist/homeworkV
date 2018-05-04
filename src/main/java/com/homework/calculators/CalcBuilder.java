@@ -5,39 +5,46 @@ import com.homework.constants.Vendors;
 import java.util.HashMap;
 import java.util.Properties;
 
+/**
+ * Builds vendor specific calculators. As we can reuse already build calculators
+ * for different lines, references to them are cashed in HashMap
+ */
 public class CalcBuilder {
-    private static CalcBuilder ourInstance = new CalcBuilder();
+  private static CalcBuilder ourInstance = new CalcBuilder();
 
-    private static HashMap<Vendors, AbstractCalculator> vendor_calcs =
-            new HashMap<Vendors, AbstractCalculator>();
+  private static HashMap<Vendors, AbstractCalculator> vendor_calcs =
+          new HashMap<Vendors, AbstractCalculator>();
 
-    private CalcBuilder() {
+  private CalcBuilder() {
+  }
+
+  public static AbstractCalculator getVendorSpecific(Vendors vendor,
+                                                     Properties props) {
+    AbstractCalculator calculator;
+
+    calculator = vendor_calcs.get(vendor);
+    if (calculator == null) {
+      calculator = ourInstance.createVendorCalc(vendor, props);
+      vendor_calcs.put(vendor, calculator);
     }
 
-    public static AbstractCalculator getVendorSpecific(Vendors vendor,
-                                                       Properties props)
-    {
-        AbstractCalculator calculator;
+    return calculator;
+  }
 
-        calculator = vendor_calcs.get(vendor);
-        if (calculator == null){
-            calculator = ourInstance.createVendorCalc(vendor, props);
-            vendor_calcs.put(vendor, calculator);
-        }
-
-        return calculator;
+  private AbstractCalculator createVendorCalc(Vendors vendor,
+                                              Properties props) {
+    switch (vendor) {
+      case MR:
+        return new MRCalculator(props);
+      case LP:
+        return new LPCalculator(props);
+      default:
+        return null;
     }
+  }
 
-    private AbstractCalculator createVendorCalc(Vendors vendor, Properties props) {
-        switch(vendor){
-            case MR: return new MRCalculator(props);
-            case LP: return new LPCalculator(props);
-            default: return null;
-        }
-    }
-
-    public static void refresh(){
-        vendor_calcs.clear();
-    }
+  public static void refresh() {
+    vendor_calcs.clear();
+  }
 
 }
